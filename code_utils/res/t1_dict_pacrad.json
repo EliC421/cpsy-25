@@ -1,0 +1,244 @@
+" Note only accounting of .nii files"
+
+{
+    "sub-controlGE140": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-controlGE154": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-controlGE159": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-controlGE161": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-controlGE164": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-controlGE166": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-controlGE185": {
+        "ses-pre": 1,
+        "ses-post": 0
+    },
+    "sub-controlGE186": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-controlGE190": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-controlGE197": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-controlGE204": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-controlGE206": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-controlSE006": {
+        "ses-pre": 2,
+        "ses-post": 2
+    },
+    "sub-controlSE007": {
+        "ses-pre": 2,
+        "ses-post": 2
+    },
+    "sub-controlSE013": {
+        "ses-pre": 2,
+        "ses-post": 2
+    },
+    "sub-controlSE024": {
+        "ses-pre": 2,
+        "ses-post": 2
+    },
+    "sub-controlSE031": {
+        "ses-pre": 2,
+        "ses-post": 2
+    },
+    "sub-controlSE039": {
+        "ses-pre": 2,
+        "ses-post": 2
+    },
+    "sub-controlSE044": {
+        "ses-pre": 2,
+        "ses-post": 0
+    },
+    "sub-controlSE045": {
+        "ses-pre": 2,
+        "ses-post": 2
+    },
+    "sub-controlSE051": {
+        "ses-pre": 2,
+        "ses-post": 2
+    },
+    "sub-controlSE052": {
+        "ses-pre": 2,
+        "ses-post": 2
+    },
+    "sub-controlSE065": {
+        "ses-pre": 2,
+        "ses-post": 2
+    },
+    "sub-controlSE076": {
+        "ses-pre": 2,
+        "ses-post": 2
+    },
+    "sub-controlSE078": {
+        "ses-pre": 2,
+        "ses-post": 2
+    },
+    "sub-controlSE083": {
+        "ses-pre": 2,
+        "ses-post": 2
+    },
+    "sub-controlSE086": {
+        "ses-pre": 2,
+        "ses-post": 2
+    },
+    "sub-controlSE087": {
+        "ses-pre": 2,
+        "ses-post": 2
+    },
+    "sub-controlSE092": {
+        "ses-pre": 2,
+        "ses-post": 2
+    },
+    "sub-controlSE104": {
+        "ses-pre": 2,
+        "ses-post": 2
+    },
+    "sub-controlSE113": {
+        "ses-pre": 2,
+        "ses-post": 2
+    },
+    "sub-experimentalGE005": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-experimentalGE132": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-experimentalGE136": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-experimentalGE146": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-experimentalGE158": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-experimentalGE174": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-experimentalGE176": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-experimentalGE178": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-experimentalGE182": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-experimentalGE191": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-experimentalGE195": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-experimentalGE199": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-experimentalGE209": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-experimentalSE008": {
+        "ses-pre": 2,
+        "ses-post": 2
+    },
+    "sub-experimentalSE009": {
+        "ses-pre": 2,
+        "ses-post": 2
+    },
+    "sub-experimentalSE010": {
+        "ses-pre": 2,
+        "ses-post": 2
+    },
+    "sub-experimentalSE011": {
+        "ses-pre": 2,
+        "ses-post": 2
+    },
+    "sub-experimentalSE012": {
+        "ses-pre": 2,
+        "ses-post": 2
+    },
+    "sub-experimentalSE025": {
+        "ses-pre": 2,
+        "ses-post": 2
+    },
+    "sub-experimentalSE043": {
+        "ses-pre": 2,
+        "ses-post": 2
+    },
+    "sub-experimentalSE055": {
+        "ses-pre": 2,
+        "ses-post": 2
+    },
+    "sub-experimentalSE056": {
+        "ses-pre": 2,
+        "ses-post": 2
+    },
+    "sub-experimentalSE066": {
+        "ses-pre": 2,
+        "ses-post": 0
+    },
+    "sub-experimentalSE074": {
+        "ses-pre": 2,
+        "ses-post": 2
+    },
+    "sub-experimentalSE077": {
+        "ses-pre": 2,
+        "ses-post": 2
+    },
+    "sub-experimentalSE089": {
+        "ses-pre": 2,
+        "ses-post": 2
+    },
+    "sub-experimentalSE098": {
+        "ses-pre": 2,
+        "ses-post": 2
+    },
+    "sub-experimentalSE102": {
+        "ses-pre": 2,
+        "ses-post": 2
+    },
+    "sub-experimentalSE110": {
+        "ses-pre": 2,
+        "ses-post": 4
+    }
+}

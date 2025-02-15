@@ -10,20 +10,16 @@ def count_t1w_files(base_path):
         if os.path.isdir(subject_path) and subject.startswith('sub-'):
             print(f"Checking subject: {subject}, Path: {subject_path}")
             session_counts = {'ses-pre': 0, 'ses-post': 0}
-            for session in os.listdir(subject_path):
-                if 'ses' in session:
-                    session_path = os.path.join(subject_path, session, 'anat')
-                    print(f"Checking session: {session}, Path: {session_path}")
-                    if os.path.isdir(session_path):
-                        for item in os.listdir(session_path):
-                            item_path = os.path.join(session_path, item)
-                            print(f"Checking item: {item}, Path: {item_path}")
-                            if item.endswith('T1w.nii') or item.endswith('T1w.nii.gz'):
-                                if 'pre' in session:
-                                    session_counts['ses-pre'] += 1
-                                elif 'post' in session:
-                                    session_counts['ses-post'] += 1
-                                print(f"Found T1w file: {item}")
+            for session in ['ses-pre', 'ses-post']:
+                session_path = os.path.join(subject_path, session, 'anat')
+                print(f"Checking session: {session}, Path: {session_path}")
+                if os.path.isdir(session_path):
+                    for item in os.listdir(session_path):
+                        item_path = os.path.join(session_path, item)
+                        print(f"Checking item: {item}, Path: {item_path}")
+                        if item.endswith('T1w.nii') or item.endswith('T1w.nii.gz'):
+                            session_counts[session] += 1
+                            print(f"Found T1w file: {item}")
             print(f"Found {session_counts['ses-pre']} T1w files for ses-pre and {session_counts['ses-post']} T1w files for ses-post for subject {subject}")
             subject_dict[subject] = session_counts
         else:
@@ -31,11 +27,11 @@ def count_t1w_files(base_path):
     return subject_dict
 
 # Use raw string to avoid escaping backslashes
-base_path = r"\\itf-rs-store24.hpc.uiowa.edu\vosslabhpc\Projects\BETTER\3-Experiment\2-data\bids"
+base_path = r"\\itf-rs-store24.hpc.uiowa.edu\vosslabhpc\Projects\PACR-AD\Imaging\BIDS"
 subject_dict = count_t1w_files(base_path)
 
 # Correct the output file path
-output_file_path = r"res/t1_dict_better.json"
+output_file_path = r"res/pac-radt1_dict.json"
 with open(output_file_path, "w") as f:
     json.dump(subject_dict, f, indent=4)
 
