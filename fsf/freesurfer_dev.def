@@ -1,0 +1,29 @@
+Bootstrap: docker
+From: freesurfer/freesurfer:dev
+
+%post
+    echo "Setting up environment for FreeSurfer development version..."
+    
+    # Install dependencies if needed (adjust as required)
+    apt-get update && apt-get install -y \
+        curl \
+        wget \
+        libglu1-mesa \
+        libxmu6 \
+        libxrandr2 \
+        libxt6 \
+        libxft2 \
+        tcsh \
+        && apt-get clean
+
+    # Set up FreeSurfer environment variables
+    echo "export FREESURFER_HOME=/usr/local/freesurfer" >> $SINGULARITY_ENVIRONMENT
+    echo "source $FREESURFER_HOME/SetUpFreeSurfer.sh" >> $SINGULARITY_ENVIRONMENT
+
+%environment
+    export FREESURFER_HOME=/usr/local/freesurfer
+    source $FREESURFER_HOME/SetUpFreeSurfer.sh
+
+%runscript
+    echo "Running FreeSurfer inside Singularity..."
+    exec "$@"
