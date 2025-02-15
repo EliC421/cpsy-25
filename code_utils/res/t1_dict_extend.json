@@ -1,0 +1,676 @@
+" Note only accounting of .nii files"
+
+{
+    "sub-2002": {
+        "ses-pre": 1,
+        "ses-post": 2
+    },
+    "sub-2009": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-2020": {
+        "ses-pre": 1,
+        "ses-post": 2
+    },
+    "sub-2041": {
+        "ses-pre": 1,
+        "ses-post": 2
+    },
+    "sub-2042": {
+        "ses-pre": 1,
+        "ses-post": 2
+    },
+    "sub-2053": {
+        "ses-pre": 1,
+        "ses-post": 2
+    },
+    "sub-2056": {
+        "ses-pre": 1,
+        "ses-post": 2
+    },
+    "sub-2057": {
+        "ses-pre": 1,
+        "ses-post": 2
+    },
+    "sub-2064": {
+        "ses-pre": 1,
+        "ses-post": 2
+    },
+    "sub-2065": {
+        "ses-pre": 1,
+        "ses-post": 2
+    },
+    "sub-2085": {
+        "ses-pre": 1,
+        "ses-post": 0
+    },
+    "sub-2095": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-2100": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2102": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-2103": {
+        "ses-pre": 1,
+        "ses-post": 2
+    },
+    "sub-2105": {
+        "ses-pre": 1,
+        "ses-post": 0
+    },
+    "sub-2106": {
+        "ses-pre": 1,
+        "ses-post": 0
+    },
+    "sub-2112": {
+        "ses-pre": 1,
+        "ses-post": 2
+    },
+    "sub-2117": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-2118": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2120": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2121": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2122": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2125": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2127": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2129": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2131": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2137": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2143": {
+        "ses-pre": 1,
+        "ses-post": 0
+    },
+    "sub-2145": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2148": {
+        "ses-pre": 1,
+        "ses-post": 0
+    },
+    "sub-2149": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2156": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2167": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2175": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2185": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2186": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2197": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2199": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2201": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2206": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2211": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2218": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2219": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2221": {
+        "ses-pre": 1,
+        "ses-post": 0
+    },
+    "sub-2224": {
+        "ses-pre": 1,
+        "ses-post": 0
+    },
+    "sub-2228": {
+        "ses-pre": 1,
+        "ses-post": 0
+    },
+    "sub-2238": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-2241": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2242": {
+        "ses-pre": 1,
+        "ses-post": 0
+    },
+    "sub-2259": {
+        "ses-pre": 1,
+        "ses-post": 0
+    },
+    "sub-2273": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2277": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2287": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2295": {
+        "ses-pre": 1,
+        "ses-post": 0
+    },
+    "sub-2302": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2307": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2314": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2316": {
+        "ses-pre": 1,
+        "ses-post": 0
+    },
+    "sub-2328": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-2332": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2353": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2364": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-2385": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2388": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2397": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2406": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2407": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-2417": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2420": {
+        "ses-pre": 1,
+        "ses-post": 0
+    },
+    "sub-2422": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2450": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2452": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2470": {
+        "ses-pre": 1,
+        "ses-post": 0
+    },
+    "sub-2480": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2488": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2501": {
+        "ses-pre": 1,
+        "ses-post": 0
+    },
+    "sub-2521": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2525": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2550": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2553": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2554": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2557": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2563": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2568": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2572": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2577": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-2579": {
+        "ses-pre": 1,
+        "ses-post": 0
+    },
+    "sub-2580": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2583": {
+        "ses-pre": 1,
+        "ses-post": 0
+    },
+    "sub-2584": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2594": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2603": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2608": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2609": {
+        "ses-pre": 1,
+        "ses-post": 0
+    },
+    "sub-2611": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-2616": {
+        "ses-pre": 1,
+        "ses-post": 0
+    },
+    "sub-2629": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2630": {
+        "ses-pre": 1,
+        "ses-post": 0
+    },
+    "sub-2637": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2638": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2641": {
+        "ses-pre": 1,
+        "ses-post": 0
+    },
+    "sub-2643": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2646": {
+        "ses-pre": 1,
+        "ses-post": 0
+    },
+    "sub-2648": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2653": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2700": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2707": {
+        "ses-pre": 1,
+        "ses-post": 0
+    },
+    "sub-2717": {
+        "ses-pre": 1,
+        "ses-post": 0
+    },
+    "sub-2718": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2738": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2739": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2742": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2743": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2745": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2762": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2770": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2774": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2778": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-2780": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2798": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2801": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2808": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2812": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-2813": {
+        "ses-pre": 1,
+        "ses-post": 0
+    },
+    "sub-2820": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2823": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2826": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2833": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2841": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2842": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2846": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2859": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2861": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2874": {
+        "ses-pre": 1,
+        "ses-post": 1
+    },
+    "sub-2999": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-5000": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-5001": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-5002": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-5003": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-5004": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-5005": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-5006": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-5007": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-5008": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-5009": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-5010": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-5011": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-5012": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-5013": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-5014": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-5015": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-5016": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-5017": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-5018": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-5019": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-5020": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-5022": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-5023": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-5024": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-5025": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-5026": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-5027": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-5028": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-5029": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-5030": {
+        "ses-pre": 0,
+        "ses-post": 0
+    },
+    "sub-999": {
+        "ses-pre": 3,
+        "ses-post": 0
+    },
+    "sub-9999": {
+        "ses-pre": 0,
+        "ses-post": 0
+    }
+}
