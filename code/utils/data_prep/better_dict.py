@@ -31,11 +31,11 @@ def count_t1w_files(base_path):
     return subject_dict
 
 # Use raw string to avoid escaping backslashes
-base_path = r"\\itf-rs-store24.hpc.uiowa.edu\vosslabhpc\Projects\BikeExtend\3-Experiment\2-Data\BIDS"
+base_path = r"\\itf-rs-store24.hpc.uiowa.edu\vosslabhpc\Projects\BETTER\3-Experiment\2-data\bids"
 subject_dict = count_t1w_files(base_path)
 
 # Correct the output file path
-output_file_path = r"res/t1_dict_extend.json"
+output_file_path = r"res/t1_dict_better.json"
 with open(output_file_path, "w") as f:
     json.dump(subject_dict, f, indent=4)
 
