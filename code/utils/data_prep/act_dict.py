@@ -9,7 +9,7 @@ def count_t1w_files(base_path):
         # Check if the subject path is a directory and matches the expected subject format
         if os.path.isdir(subject_path) and subject.startswith('sub-'):
             print(f"Checking subject: {subject}, Path: {subject_path}")
-            session_counts = {'ses-pre': 0, 'ses-post': 0}
+            session_counts = {'ses-pre': {'count': 0, 'paths': []}, 'ses-post': {'count': 0, 'paths': []}}
             for session in os.listdir(subject_path):
                 if 'ses' in session:
                     session_path = os.path.join(subject_path, session, 'anat')
@@ -20,11 +20,13 @@ def count_t1w_files(base_path):
                             print(f"Checking item: {item}, Path: {item_path}")
                             if item.endswith('T1w.nii') or item.endswith('T1w.nii.gz'):
                                 if 'pre' in session:
-                                    session_counts['ses-pre'] += 1
+                                    session_counts['ses-pre']['count'] += 1
+                                    session_counts['ses-pre']['paths'].append(item_path)
                                 elif 'post' in session:
-                                    session_counts['ses-post'] += 1
+                                    session_counts['ses-post']['count'] += 1
+                                    session_counts['ses-post']['paths'].append(item_path)
                                 print(f"Found T1w file: {item}")
-            print(f"Found {session_counts['ses-pre']} T1w files for ses-pre and {session_counts['ses-post']} T1w files for ses-post for subject {subject}")
+            print(f"Found {session_counts['ses-pre']['count']} T1w files for ses-pre and {session_counts['ses-post']['count']} T1w files for ses-post for subject {subject}")
             subject_dict[subject] = session_counts
         else:
             print(f"Skipping {subject_path}, not a directory or not a subject folder")
