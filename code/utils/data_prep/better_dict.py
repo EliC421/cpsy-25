@@ -1,8 +1,7 @@
 import os
-import json
 
-def collect_t1w_paths(base_path):
-    t1w_paths = []
+def collect_summary_paths(base_path):
+    summary_paths = []
     print(f"Base path: {base_path}")
     for subject in os.listdir(base_path):
         subject_path = os.path.join(base_path, subject)
@@ -10,28 +9,28 @@ def collect_t1w_paths(base_path):
         if os.path.isdir(subject_path) and subject.startswith('sub-'):
             print(f"Checking subject: {subject}, Path: {subject_path}")
             for session in os.listdir(subject_path):
-                if 'ses' in session:
-                    session_path = os.path.join(subject_path, session, 'anat')
+                if 'ses-' in session:
+                    session_path = os.path.join(subject_path, session, 'beh', 'output_beh', 'results')
                     print(f"Checking session: {session}, Path: {session_path}")
                     if os.path.isdir(session_path):
-                        for item in os.listdir(session_path):
-                            item_path = os.path.join(session_path, item)
-                            print(f"Checking item: {item}, Path: {item_path}")
-                            if item.endswith('T1w.nii') or item.endswith('T1w.nii.gz'):
-                                t1w_paths.append(item_path)
-                                print(f"Found T1w file: {item_path}")
+                        for file in os.listdir(session_path):
+                            if file.startswith('part5_personsummary_MM'):
+                                summary_file = os.path.join(session_path, file)
+                                if os.path.isfile(summary_file):
+                                    summary_paths.append(summary_file)
+                                    print(f"Found summary file: {summary_file}")
         else:
             print(f"Skipping {subject_path}, not a directory or not a subject folder")
-    return t1w_paths
+    return summary_paths
 
 # Use raw string to avoid escaping backslashes
-base_path = r"\\itf-rs-store24.hpc.uiowa.edu\vosslabhpc\Projects\BETTER\3-Experiment\2-data\bids"
-t1w_paths = collect_t1w_paths(base_path)
+base_path = r"\\itf-rs-store24.hpc.uiowa.edu\vosslabhpc\Projects\BETTER\3-Experiment\2-data\bids\derivatives\GGIR"
+summary_paths = collect_summary_paths(base_path)
 
 # Correct the output file path
-output_file_path = r"better_path.txt"
+output_file_path = r"ggir_better_paths.txt"
 with open(output_file_path, "w") as f:
-    for path in t1w_paths:
+    for path in summary_paths:
         f.write(path + "\n")
 
-print(f"Paths of T1w files have been written to {output_file_path}")
+print(f"Paths of summary files have been written to {output_file_path}")
