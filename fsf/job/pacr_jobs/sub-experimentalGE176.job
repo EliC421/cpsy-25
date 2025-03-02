@@ -1,0 +1,14 @@
+
+#!/bin/bash
+#$ -pe smp 16
+#$ -q all.q
+#$ -m bea
+#$ -M zachary-gilliam@uiowa.edu
+#$ -o /Shared/vosslabhpc/symposia/cpsy-25/data/freesurfer_7.1/pacr/out
+#$ -e /Shared/vosslabhpc/symposia/cpsy-25/data/freesurfer_7.1/pacr/err
+
+mkdir -p /Shared/vosslabhpc/symposia/cpsy-25/data/freesurfer_7.1/pacr/sub-experimentalGE176
+
+OMP_NUM_THREADS=10
+export FS_LICENSE=/Shared/vosslabhpc/Projects/BikeExtend/3-Experiment/2-Data/BIDS/derivatives/code/freesurfer_7.1/job_scripts/license.txt
+singularity exec --cleanenv -B /Shared/vosslabhpc/symposia/cpsy-25/gitrepo/fsf/wmh_synthseg_latest.sif /Shared/vosslabhpc/symposia/cpsy-25/gitrepo/fsf/wmh_synthseg_latest.sif python /app/WMHSynthSeg/inference.py --i /Shared/vosslabhpc/Projects/PACR-AD/Imaging/BIDS/derivatives/freesurfer/sub-experimentalGE176/mri/brain.mgz --o /Shared/vosslabhpc/symposia/cpsy-25/data/freesurfer_7.1/pacr/sub-experimentalGE176/sub-experimentalGE176_synth.nii.gz --threads 10 --save_lesion_probabilities --csv_vols /Shared/vosslabhpc/symposia/cpsy-25/data/freesurfer_7.1/pacr/sub-experimentalGE176/sub-experimentalGE176_synth.csv 
