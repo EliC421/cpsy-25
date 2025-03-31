@@ -30,10 +30,11 @@ print(opt)
 cat("Project Directory:", opt$project_dir, "\n")
 cat("Files:", opt$files, "\n")
 # Main function
+# Main function
 main <- function(opt) {
   # Set paths
   paths <- set_paths(opt$project_dir, opt$project_deriv_dir)
-  GGIRfiles <- character(0)
+  GGIRfiles <- character(0)  # Ensure it's initialized as a character vector
 
   # Check if files were provided as input
   if (!is.null(opt$files)) {
@@ -44,8 +45,8 @@ main <- function(opt) {
     GGIRfiles <- files_to_process[file.exists(files_to_process)]
     
     # Ensure GGIRfiles is a character vector and not empty
-    if (is.null(GGIRfiles) || length(GGIRfiles) == 0) {
-      stop("GGIRfiles is not initialized or empty or the specified files do not exist.")
+    if (length(GGIRfiles) == 0) {
+      stop("GGIRfiles is empty or the specified files do not exist.")
     }
 
     cat("GGIRfiles before processing:", GGIRfiles, "\n")
@@ -69,8 +70,8 @@ main <- function(opt) {
   GGIRfiles <- list_accel_files(subdirs, paths$ProjectDir)
   
   # Ensure GGIRfiles is a character vector and not empty
-  if (is.null(GGIRfiles) || length(GGIRfiles) == 0) {
-    stop("GGIRfiles is not initialized or empty.")
+  if (length(GGIRfiles) == 0) {
+    stop("GGIRfiles is empty.")
   }
   
   if (!is.character(GGIRfiles)) {
@@ -81,7 +82,10 @@ main <- function(opt) {
   for (r in GGIRfiles) {
     process_file(r, paths$ProjectDir, paths$ProjectDerivDir, opt$verbose)
   }
-}
+
+
+# Function to list accel.csv files
+list_accel_files <- function(subdirs, project_dir) {
 
 # Function to set paths
 set_paths <- function(project_dir, project_deriv_dir) {
@@ -421,5 +425,3 @@ re_run_intensity_gradient <- function(r, project_dir, project_deriv_dir, verbose
   })
 }
 
-# Run the main function
-main(opt)

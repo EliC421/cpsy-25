@@ -1,146 +1,244 @@
+#!/Users/zakg04/miniconda3/envs/pymc_env/bin/python
 import numpy as np
-import pymc3 as pm
-import theano.tensor as tt
-from scipy import sparse
+import pymc as pm
+import pytensor.tensor as pt
+from pytensor import scan
+from pytensor.gradient import disconnected_grad
+import uuid
+import arviz as az
 
-def ideal_data(num, dimX, dimY, rrank, noise=1):
-    """Generate low-rank data for testing."""
-    X = np.random.randn(num, dimX)
-    # Create a low-rank coefficient matrix: W = A * B^T
-    W = np.dot(np.random.randn(dimX, rrank), np.random.randn(rrank, dimY))
-    Y = np.dot(X, W) + np.random.randn(num, dimY) * noise
-    return X, Y
-
-class BayesianReducedRankRegressor(object):
+class RRR:
     """
-    Bayesian Reduced Rank Regressor with Monotonic Effects for Ordinal Predictors.
+    Reduced Rank Regression (RRR) with Bayesian inference using PyMC.
     
-    This model assumes a regression of the form:
-        Y ~ N(X_mod A B^T, σ²)
-    where the coefficient matrix is factorized as C = A B^T.
+    The regression model is:
     
-    Ordinal predictors in X (specified via ordinal_info) are transformed using a
-    monotonic effect. For an ordinal predictor taking values in {0, ..., D}, the
-    transformation is defined as:
+        Y ~ Normal( (X_mod dot A) dot B^T, sigma )
     
-        c_mo(x, ζ) = ∑_{i=1}^{x} ζ_i,
-    
-    where ζ is a simplex (i.e. ζ_i ≥ 0 and ∑ ζ_i = 1) with a Dirichlet(1) prior.
-    
-    Priors:
-      - Each element of A ~ Laplace(0, b=1) to promote sparsity.
-      - Each element of B ~ Laplace(0, b=1) to promote sparsity (allowing negative values).
-      - For each ordinal predictor, ζ ~ Dirichlet(ones), which centers the effect around a linear trend.
-      - Observation noise is fixed (default σ = 0.908).
-      
-    Parameters:
-      X            : Predictor matrix (numpy array).
-      Y            : Response matrix (numpy array).
-      rank         : Rank constraint (latent dimensionality).
-      noise        : Fixed observation noise standard deviation.
-      ordinal_info : dict mapping column index (int) to the number of ordinal categories D.
-                     For an ordinal predictor taking values in {0, …, D} a monotonic
-                     transformation is applied.
+    where:
+      - X_mod is X with ordinal columns transformed via a monotonic effect.
+      - For each ordinal predictor (column index j in ordinal_info), 
+          ζ_j ~ Dirichlet( a=ones* (1/D) )  [with D given in ordinal_info[j]]
+        and the transformation for an observed value x is:
+          cmo(x, ζ_j) = sum_{i=1}^{x} ζ_{j,i}   (with 0 if x==0)
+      - For continuous predictors, the raw X values are used.
+      - A (shape: p x rank) has Laplace(0,1) priors.
+      - B (shape: q x rank) has LogNormal(mu_B, sigma_B) priors.
+      - sigma (error SD) defaults to 0.908 but can be changed.
     """
-    def __init__(self, X, Y, rank, noise=0.908, ordinal_info=None):
-        self.X = np.asarray(X)
-        self.Y = np.asarray(Y)
-        # Ensure inputs are 2D.
-        if self.X.ndim == 1:
-            self.X = self.X.reshape(-1, 1)
-        if self.Y.ndim == 1:
-            self.Y = self.Y.reshape(-1, 1)
+    def __init__(self, rank, noise=0.25, ordinal_info=None, mu_B=0, sigma_B=1):
+        """
+        Parameters:
+          rank         : int, the reduced rank (k) constraint, must be <= min(n, p).
+          noise        : float, the observation noise (default 0.908).
+          ordinal_info : dict mapping ordinal predictor column indices to maximum level D.
+                         For example, {2: 5} means column 2 is ordinal with levels {0,1,...,5}.
+          mu_B         : mean parameter for B's LogNormal prior.
+          sigma_B      : sigma parameter for B's LogNormal prior.
+        """
         self.rank = rank
         self.noise = noise
-        self.ordinal_info = ordinal_info  # e.g., {col_index: D}
-        self.n_samples, self.num_features = self.X.shape
-        self.num_targets = self.Y.shape[1]
+        self.ordinal_info = ordinal_info if ordinal_info is not None else {}
+        self.mu_B = mu_B
+        self.sigma_B = sigma_B
         self.model = None
         self.trace = None
+        self._model_id = uuid.uuid4().hex  # unique identifier for each model build
 
-    def fit(self, samples=1000, tune=1000, random_seed=42):
+    def build_model(self, X, Y):
+        if self.model is not None:
+            return self.model
         """
-        Build the Bayesian model and sample from the posterior.
+        Constructs the PyMC model using shared data.
         
         Parameters:
-          samples     : Number of posterior samples to draw.
-          tune        : Number of tuning (burn-in) steps.
-          random_seed : Seed for reproducibility.
-        """
-        with pm.Model() as model:
-            # Set up the predictor data as a shared variable.
-            X_shared = pm.Data('X_shared', self.X)
-            
-            # If ordinal predictors are specified, apply the monotonic transformation.
-            # X_mod will replace ordinal columns with their transformed values.
-            X_mod = X_shared
-            if self.ordinal_info is not None:
-                for col, D in self.ordinal_info.items():
-                    # ζ is a simplex of length D for the ordinal predictor at column col.
-                    zeta = pm.Dirichlet(f'zeta_{col}', a=np.ones(D), shape=(D,))
-                    # Compute cumulative sum of ζ.
-                    zeta_cum = tt.extra_ops.cumsum(zeta)
-                    # Extract the ordinal column and cast to int32.
-                    x_col = tt.cast(X_shared[:, col], 'int32')
-                    # For each entry: if 0 then 0, else the cumulative sum at index (x-1).
-                    transformed = tt.switch(tt.eq(x_col, 0), 0.0, zeta_cum[x_col - 1])
-                    # Replace column col in X_mod with the transformed values.
-                    X_mod = tt.set_subtensor(X_mod[:, col], transformed)
-            
-            # Priors for A and B (using Laplace for sparsity, allowing negativity).
-            A = pm.Laplace('A', mu=0, b=1, shape=(self.num_features, self.rank))
-            B = pm.Laplace('B', mu=0, b=1, shape=(self.num_targets, self.rank))
-            
-            # Expected value: μ = X_mod * A * B^T.
-            mu = tt.dot(X_mod, tt.dot(A, B.T))
-            
-            # Likelihood with fixed Gaussian noise.
-            Y_obs = pm.Normal('Y_obs', mu=mu, sigma=self.noise, observed=self.Y)
-            
-            # Sample from the posterior.
-            self.trace = pm.sample(samples, tune=tune, random_seed=random_seed, progressbar=True)
-            self.model = model
-
-    def predict(self, X_new):
-        """
-        Predict responses for new data X_new using the posterior means.
-        
-        For ordinal predictors, the monotonic transformation is applied using the
-        posterior mean of the ζ parameters.
-        
-        Parameters:
-          X_new: New predictor data (2D array).
+          X : numpy array of shape (n, p), predictor matrix.
+          Y : numpy array of shape (n, q), response matrix.
           
         Returns:
-          Predicted responses computed as: X_new_transformed * (A_mean * B_mean^T)
+          model : the built PyMC model.
         """
-        X_new = np.asarray(X_new)
-        if X_new.ndim == 1:
-            X_new = X_new.reshape(-1, 1)
-        # Copy new data so we can modify ordinal columns.
-        X_new_trans = X_new.copy()
-        if self.ordinal_info is not None:
-            for col, D in self.ordinal_info.items():
-                # Obtain the posterior mean for ζ for this ordinal predictor.
-                zeta_mean = self.trace.get_values(f'zeta_{col}', combine=True).mean(axis=0)
-                zeta_cum_mean = np.cumsum(zeta_mean)
-                # For each value in the ordinal column, transform according to:
-                # if x==0 then 0, else cumulative sum at index (x-1).
-                transformed_col = np.array([0 if int(x)==0 else zeta_cum_mean[int(x)-1] for x in X_new_trans[:, col]])
-                X_new_trans[:, col] = transformed_col
-        # Get posterior means for A and B.
-        A_mean = self.trace['A'].mean(axis=0)
-        B_mean = self.trace['B'].mean(axis=0)
-        return np.dot(X_new_trans, np.dot(A_mean, B_mean.T))
+        n, p = X.shape
+        q = Y.shape[1]
+        
+        with pm.Model() as model:
+            # Use shared data so that new data can be set later for prediction.
+            X_shared = pm.Data('X_shared', X)
+            
+            # Build modified X: for ordinal columns, transform via monotonic effect.
+            X_mod_cols = []
+            for j in range(p):
+                if j in self.ordinal_info:
+                    D = self.ordinal_info[j]  # maximum level for ordinal predictor j
+                    # Latent simplex for ordinal predictor j.
+                    zeta = pm.Dirichlet(f'zeta_{j}', a=np.ones(D) * (1.0 / D), shape=(D,))
+                    # Get the jth column (cast to int); assume observed values are integers (0,...,D).
+                    x_col = pt.cast(X_shared[:, j], 'int32')
+                    
+                    # Define a scalar monotonic transformation.
+                    def monotonic_transform(x_val, cumsum_zeta):
+                        # if x_val > 0, return cumulative sum at index x_val-1, else 0.
+                        return pt.switch(pt.gt(x_val, 0), cumsum_zeta[x_val - 1], 0.)
+                    
+                    # Apply the transformation to each element of x_col using a scan.
+                    var_name = f'zeta_{j}_{self._model_id}'
+                    zeta = pm.Dirichlet(var_name, a=np.ones(D) * (1.0 / D), shape=(D,))
+                    # Detach the cumulative sum from the graph:
+                    zeta_cumsum = disconnected_grad(pt.cumsum(zeta))
+                    transformed = pt.switch(pt.gt(x_col, 0), pt.take(zeta_cumsum, x_col - 1), 0.)
+                    X_mod_cols.append(transformed)
+                else:
+                    # Continuous predictor: use the original value.
+                    X_mod_cols.append(X_shared[:, j])
+            # Stack the columns back together to form the modified predictor matrix.
+            X_mod = pt.stack(X_mod_cols, axis=1)
+            
+            # Coefficient matrix A: for all predictors (p x rank) with Laplace prior.
+            A = pm.Laplace('A', mu=0, b=1, shape=(p, self.rank))
+            # Compute latent representation (n x rank).
+            latent = pt.dot(X_mod, A)
+            
+            # Factor matrix B: (q x rank) with a LogNormal prior.
+            B = pm.Lognormal('B', mu=self.mu_B, sigma=self.sigma_B, shape=(q, self.rank))
+            # Predicted mean: (n x q)
+            mu_Y = pt.dot(latent, B.T)
+            
+            # Likelihood for responses.
+            Y_obs = pm.Normal('Y_obs', mu=mu_Y, sigma=self.noise, observed=Y)
+            
+        self.model = model
+        return model
 
-    def __str__(self):
-        return f'Bayesian Reduced Rank Regressor with Monotonic Effects (rank = {self.rank})'
+    def train(self, X, Y, draws=1000, tune=1000, **kwargs):
+        """
+        Build the model with data and run MCMC sampling.
+        
+        Parameters:
+          X      : numpy array, predictor matrix.
+          Y      : numpy array, response matrix.
+          draws  : number of posterior samples to draw.
+          tune   : number of tuning steps.
+          kwargs : any additional keyword arguments to pm.sample.
+          
+        Returns:
+          trace : the sampled posterior trace.
+        """
+        model = self.build_model(X, Y)
+        with model:
+            self.trace = pm.sample(draws=draws, tune=tune, **kwargs)
+        return self.trace
 
+    def predict(self, X_new, posterior_predictive=True, **kwargs):
+        """
+        Generate predictions for new data.
+        
+        Parameters:
+          X_new               : numpy array, new predictor data (n_new x p).
+          posterior_predictive: if True, return samples from the posterior predictive;
+                                otherwise, return the mean prediction computed from posterior means.
+          kwargs              : additional arguments passed to pm.sample_posterior_predictive.
+                                
+        Returns:
+          If posterior_predictive=True: an array of posterior predictive samples for Y.
+          Otherwise: the mean prediction (n_new x q).
+        """
+        if self.model is None:
+            raise ValueError("Model has not been built/trained yet.")
+            
+        with self.model:
+            # Update shared data
+            pm.set_data({'X_shared': X_new})
+            
+            if posterior_predictive:
+                # Use 'draws' instead of 'samples'
+                ppc = pm.sample_posterior_predictive(self.trace)
+                print("Keys in posterior predictive:", ppc.keys())  # Debugging step
+                return ppc.posterior_predictive["Y_obs"].values
+            else:
+                # Compute the posterior mean prediction
+                A_mean = self.trace.posterior['A'].mean(dim=("chain", "draw"))
+                B_mean = self.trace.posterior['B'].mean(dim=("chain", "draw"))
+                
+                X_new_mod = X_new.copy()
+                for j in self.ordinal_info:
+                    D = self.ordinal_info[j]
+                    zeta_samples = self.trace.posterior[f'zeta_{j}']
+                    zeta_mean = zeta_samples.mean(dim=("chain", "draw"))
+                    cumsum_zeta = np.cumsum(zeta_mean, axis=-1)
+                    X_new_mod[:, j] = np.array([cumsum_zeta[int(x) - 1] if x > 0 else 0 for x in X_new[:, j]])
+                    
+            latent_mean = X_new_mod @ A_mean.values  # Convert to NumPy
+            mu_Y_mean = latent_mean @ B_mean.values.T  # Convert to NumPy
+            return mu_Y_mean
 
+# Generate ideal data and test RRR class
+def generate_test_data(n=200, p=5, q=3, ordinal_col=2, max_level=5):
+    """
+    Generate synthetic test data.
+    
+    Parameters:
+      n           : int, number of observations.
+      p           : int, number of predictors.
+      q           : int, number of response variables.
+      ordinal_col : int, index of the ordinal predictor column.
+      max_level   : int, maximum ordinal level (i.e., D in the RRR model).
+      
+    Returns:
+      X : numpy array of shape (n, p)
+      Y : numpy array of shape (n, q)
+    """
+    X = np.empty((n, p))
+    for j in range(p):
+        if j == ordinal_col:
+            # Generate integer levels 0,...,max_level
+            X[:, j] = np.random.randint(0, max_level + 1, size=n)
+        else:
+            # Continuous predictors sampled from a standard normal distribution
+            X[:, j] = np.random.randn(n)
+    
+    # Create a low-rank structure for Y.
+    rank = 2
+    # True latent coefficients for predictors and responses.
+    A_true = np.random.randn(p, rank)
+    B_true = np.random.randn(q, rank)
+    
+    # For the ordinal column, mimic a monotonic transformation.
+    # (For testing we use a simple scaling: x -> x / max_level if x > 0, else 0)
+    X_mod = X.copy()
+    X_mod[:, ordinal_col] = np.where(X[:, ordinal_col] > 0, X[:, ordinal_col] / max_level, 0)
+    
+    # Generate latent structure and add a small noise.
+    latent = np.dot(X_mod, A_true)
+    noise_std = 0.1
+    Y = np.dot(latent, B_true.T) + np.random.randn(n, q) * noise_std
+    
+    return X, Y
 
-
-
-
-
-
-
+def main():
+    # Seed for reproducibility.
+    np.random.seed(42)
+    
+    # Generate test data.
+    n, p, q = 200, 5, 3
+    ordinal_info = {2: 5}  # Column index 2 is ordinal with levels 0,...,5
+    X, Y = generate_test_data(n=n, p=p, q=q, ordinal_col=2, max_level=5)
+    
+    # Instantiate the RRR model.
+    # Note: Here we set noise to a low value (e.g., 0.1) to reflect the data generating process.
+    model = RRR(rank=2, noise=0.1, ordinal_info=ordinal_info, mu_B=0, sigma_B=1)
+    
+    # Train the model with a modest number of draws for testing.
+    trace = model.train(X, Y, draws=300, tune=300, target_accept=0.9)
+    
+    # Generate predictions using posterior predictive sampling.
+    ppc_samples = model.predict(X, posterior_predictive=True, samples=100)
+    print("Posterior predictive sample shape:", ppc_samples.shape)
+    
+    # Also compute the mean prediction using posterior mean parameters.
+    mean_prediction = model.predict(X, posterior_predictive=False)
+    print("Mean prediction shape:", mean_prediction.shape)
+    print("First 5 mean predictions:\n", mean_prediction[:5])
+    print("First 5 Response Variables:\n", Y[:5])
+    
+if __name__ == "__main__":
+    main()
