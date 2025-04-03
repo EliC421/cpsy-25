@@ -1,4 +1,4 @@
-#!/Users/zakg04/miniconda3/envs/pymc_env/bin/python
+#!C:\Users\jedim\miniforge3\envs\pymc_env
 import numpy as np
 import pymc as pm
 import pytensor.tensor as pt
