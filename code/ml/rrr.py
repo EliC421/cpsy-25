@@ -202,7 +202,7 @@ def main():
     model = RRR(rank=1, noise=0.2, ordinal_info=ordinal_info, mu_B=0, sigma_B=1)
 
     # Train the model
-    trace = model.train(X, Y, draws=2000, tune=1500, target_accept=0.90)
+    trace = model.train(X, Y, draws=2000, tune=1500, target_accept=0.90, cores=2)
     print(az.summary(trace, var_names=["A", "B", "b"], round_to=4, stat_focus="mean").to_string())
     print(az.summary(trace, var_names=["A_tilde", "B_tilde", "u_A"], round_to=3).to_string())
     az.plot_trace(trace, var_names=["b", "A", "B"])
