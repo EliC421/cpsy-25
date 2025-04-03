@@ -6,6 +6,7 @@ from pytensor import scan
 from pytensor.gradient import disconnected_grad
 import uuid
 import arviz as az
+import matplotlib.pyplot as plt
 
 class RRR:
     """
@@ -82,17 +83,23 @@ class RRR:
             # Latent representation: (n x rank)
             latent = pt.dot(X_mod, A)
             
-            # --- Non-centered parameterization for factor matrix B ---
-            # Instead of sampling B ~ LogNormal(mu_B, sigma_B) directly,
-            # sample B_tilde ~ Normal(0,1) and set B = exp(mu_B + sigma_B * B_tilde)
+            # --- Non-centered parameterization for factor matrix B with normalization ---
+            # Sample B_tilde ~ Normal to allow both +/-
             B_tilde = pm.Normal('B_tilde', mu=0, sigma=1, shape=(q, self.rank))
-            B = pm.Deterministic('B', pt.exp(self.mu_B + self.sigma_B * B_tilde))
+
+            # Normalize each column to unit L2 norm
+            B_normalized = B_tilde / pt.sqrt(pt.sum(B_tilde**2, axis=0, keepdims=True))
+
+            # Use as deterministic variable
+            B = pm.Deterministic('B', B_normalized)
             
             # Predicted mean: (n x q)
             mu_Y = pt.dot(latent, B.T)
             
             # Likelihood for responses.
-            Y_obs = pm.Normal('Y_obs', mu=mu_Y, sigma=self.noise, observed=Y)
+            sigma = pm.HalfCauchy('sigma', beta=2)
+            Y_obs = pm.Normal('Y_obs', mu=mu_Y, sigma=sigma, observed=Y)
+        print(X_shared)
             
         self.model = model
         return model
@@ -113,7 +120,14 @@ class RRR:
         """
         model = self.build_model(X, Y)
         with model:
-            self.trace = pm.sample(draws=draws, tune=tune, chains=2, **kwargs)
+            self.trace = pm.sample(
+            draws=2000, 
+            tune=3000, 
+            target_accept=0.95,
+            chains=3, 
+            cores=4,
+            return_inferencedata=True
+        )
 
         return self.trace
 
@@ -142,6 +156,8 @@ class RRR:
                 # Use 'draws' instead of 'samples'
                 ppc = pm.sample_posterior_predictive(self.trace)
                 print("Keys in posterior predictive:", ppc.keys())  # Debugging step
+                az.plot_ppc(ppc)
+                plt.show()
                 return ppc.posterior_predictive["Y_obs"].values
             else:
                 # Compute the posterior mean prediction
@@ -186,7 +202,6 @@ def load_data(x_path, y_path):
     return X_df.to_numpy(), Y_df.to_numpy()
 
 def main():
-    import matplotlib.pyplot as plt
     # Set file paths
     x_path = "../../data/final/x.csv"  # ⬅️ Replace this with your actual file path
     y_path = "../../data/final/y.csv"  # ⬅️ Replace this with your actual file path
@@ -196,13 +211,14 @@ def main():
 
     # TODO: Define ordinal columns and their max levels, e.g.:
     # If column 2 is ordinal with values from 0 to 5:
-    ordinal_info = {1: 10}
-
+    ordinal_col = 1
+    X[:, ordinal_col] = np.minimum(X[:, ordinal_col], 6).astype(int)
+    ordinal_info = {ordinal_col: 6}  # D = 7 levels: 0 to 7
     # Instantiate the RRR model
-    model = RRR(rank=1, noise=0.2, ordinal_info=ordinal_info, mu_B=0, sigma_B=1)
+    model = RRR(rank=1, noise=0.4, ordinal_info=ordinal_info, mu_B=0, sigma_B=1)
 
     # Train the model
-    trace = model.train(X, Y, draws=2000, tune=1500, target_accept=0.90, cores=2)
+    trace = model.train(X, Y, draws=2000, tune=1500, target_accept=0.90)
     print(az.summary(trace, var_names=["A", "B", "b"], round_to=4, stat_focus="mean").to_string())
     print(az.summary(trace, var_names=["A_tilde", "B_tilde", "u_A"], round_to=3).to_string())
     az.plot_trace(trace, var_names=["b", "A", "B"])
