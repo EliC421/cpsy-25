@@ -74,8 +74,8 @@ class RRR:
             # --- Non-centered parameterization for coefficient matrix A ---
             # Instead of directly sampling A ~ Laplace(0,1), we use:
             #    A = sqrt(u_A/2) * A_tilde,  with u_A ~ Exponential(1) and A_tilde ~ Normal(0,1)
-            b = pm.HalfCauchy('b', beta=2) #hyperparameter on b to allow sampling for scale of laplace
-            u_A = pm.Exponential('u_A', lam=1, shape=(p, self.rank))
+            b = pm.HalfCauchy('b', beta=10)
+            u_A = pm.Exponential('u_A', lam=0.1, shape=(p, self.rank))
             A_tilde = pm.Normal('A_tilde', mu=0, sigma=1, shape=(p, self.rank))
             A = pm.Deterministic('A', b * A_tilde * pt.sqrt(u_A / 2))
             
@@ -114,6 +114,7 @@ class RRR:
         model = self.build_model(X, Y)
         with model:
             self.trace = pm.sample(draws=draws, tune=tune, chains=2, **kwargs)
+
         return self.trace
 
     def predict(self, X_new, posterior_predictive=True, **kwargs):
@@ -185,6 +186,7 @@ def load_data(x_path, y_path):
     return X_df.to_numpy(), Y_df.to_numpy()
 
 def main():
+    import matplotlib.pyplot as plt
     # Set file paths
     x_path = "../../data/final/x.csv"  # ⬅️ Replace this with your actual file path
     y_path = "../../data/final/y.csv"  # ⬅️ Replace this with your actual file path
@@ -197,10 +199,15 @@ def main():
     ordinal_info = {1: 10}
 
     # Instantiate the RRR model
-    model = RRR(rank=1, noise=0.4, ordinal_info=ordinal_info, mu_B=0, sigma_B=4)
+    model = RRR(rank=1, noise=0.2, ordinal_info=ordinal_info, mu_B=0, sigma_B=1)
 
     # Train the model
     trace = model.train(X, Y, draws=2000, tune=1500, target_accept=0.90)
+    print(az.summary(trace, var_names=["A", "B", "b"], round_to=4, stat_focus="mean").to_string())
+    print(az.summary(trace, var_names=["A_tilde", "B_tilde", "u_A"], round_to=3).to_string())
+    az.plot_trace(trace, var_names=["b", "A", "B"])
+    plt.tight_layout()
+    plt.show()
 
     # Posterior predictive sampling
     ppc_samples = model.predict(X, posterior_predictive=True, samples=100)
