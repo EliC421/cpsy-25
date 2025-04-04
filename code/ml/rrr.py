@@ -135,7 +135,7 @@ class RRR:
             self.trace = pm.sample(
             draws=1000, 
             tune=2000, 
-            target_accept=0.99,
+            target_accept=0.95,
             chains=2, 
             cores=4,
             return_inferencedata=True
