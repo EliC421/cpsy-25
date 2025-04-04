@@ -97,8 +97,13 @@ class RRR:
             mu_Y = pt.dot(latent, B.T)
             
             # Likelihood for responses.
-            sigma = pm.HalfCauchy('sigma', beta=2)
-            Y_obs = pm.Normal('Y_obs', mu=mu_Y, sigma=sigma, observed=Y)
+            # Use a HalfNormal prior for sigma (you can adjust the scale if needed)
+            sigma = pm.HalfNormal('sigma', sigma=1)
+            # Introduce a degrees-of-freedom parameter (nu) for the t-distribution
+            nu = pm.Exponential('nu', lam=1/30)
+            # Use a StudentT likelihood instead of Normal
+            Y_obs = pm.StudentT('Y_obs', mu=mu_Y, sigma=sigma, nu=nu, observed=Y)
+
         print(X_shared)
             
         self.model = model
